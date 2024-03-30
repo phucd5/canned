@@ -1,23 +1,23 @@
-import logo from './logo.svg';
 import './App.css';
+import { APIProvider, Map, Marker } from '@vis.gl/react-google-maps';
+
+const gMapsApi = "AIzaSyBJnQgOyRfOmaXUJS-uZP7KrcFKdAjZFok";
 
 function App() {
+  const position = { lat: 53.54992, lng: 10.00678 };
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+
+      <APIProvider apiKey={gMapsApi}>
+
+        <Map
+          defaultZoom={3}
+          defaultCenter={{ lat: 22.54992, lng: 0 }}
+          gestureHandling={'greedy'}
+          disableDefaultUI={true}
+        />
+      </APIProvider>
+
     </div>
   );
 }
