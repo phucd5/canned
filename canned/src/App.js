@@ -18,7 +18,6 @@ function App() {
 					<Route path="/login" element={<LoginPage />} />
 					<Route path="/register" element={<RegisterPage />} />
 					<Route path="/map" element={<ProtectedRoute><LocationMap /></ProtectedRoute>} />
-					<Route path="/upload" element={<ProtectedRoute><ImageUploader /></ProtectedRoute>} />
 					<Route path="/stats" element={<ProtectedRoute><StatsPage /></ProtectedRoute>} />
 				</Routes>
 			</BrowserRouter>
