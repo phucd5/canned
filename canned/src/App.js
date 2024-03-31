@@ -6,6 +6,7 @@ import LoginPage from "./components/AccountPage/LoginPage";
 import RegisterPage from "./components/AccountPage/RegisterPage";
 import LocationMap from "./components/Map/Map";
 import ImageUploader from "./components/ImageUploader/ImageUploader";
+import CrowdsourcingButton from "./components/Crowdsourcing/CrowdsourcingButton";
 
 const gMapsApi = "AIzaSyBJnQgOyRfOmaXUJS-uZP7KrcFKdAjZFok";
 
@@ -19,6 +20,7 @@ function App() {
 					<Route path="/register" element={<RegisterPage />} />
 					<Route path="/map" element={<LocationMap />} />
 					<Route path="/upload" element={<ImageUploader />} />
+					<Route path="/location" element={<CrowdsourcingButton />} />
 				</Routes>
 			</BrowserRouter>
 		</div>
