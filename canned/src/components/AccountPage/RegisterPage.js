@@ -3,13 +3,14 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import axios from "axios";
 import "./RegisterPage.css";
+import { userRegister } from "../../scripts/database";
+
 
 const RegisterPage = () => {
+	const navigate = useNavigate();
 	const [isRegistered, setIsRegistered] = useState(false);
 	const [user, setUser] = useState(false);
 	const [formData, setFormData] = useState({
-		firstName: "",
-		lastName: "",
 		userName: "",
 		email: "",
 		password: "",
@@ -23,8 +24,11 @@ const RegisterPage = () => {
 		});
 	};
 
-	const handleSubmit = (e) => {
-		e.preventDefault();
+	const handleSubmit = async (e) => {
+		e.preventDefault()
+		await userRegister(formData.userName, formData.email, formData.password)
+		// if successful
+		navigate("/login")
 	};
 
 	return (
@@ -33,32 +37,10 @@ const RegisterPage = () => {
 				<h1>Register</h1>
 				<form onSubmit={handleSubmit}>
 					<div>
-						<label className="form-label">First Name:</label>
-						<input
-							type="text"
-							name="firstName"
-							value={formData.firstName}
-							onChange={handleChange}
-							className="form-input"
-							placeholder="Type something..."
-						/>
-					</div>
-					<div>
-						<label className="form-label">Last Name:</label>
-						<input
-							type="text"
-							name="lastName"
-							value={formData.lastName}
-							onChange={handleChange}
-							className="form-input"
-							placeholder="Type something..."
-						/>
-					</div>
-					<div>
 						<label className="form-label">Username:</label>
 						<input
 							type="text"
-							name="lastName"
+							name="userName"
 							value={formData.userName}
 							onChange={handleChange}
 							className="form-input"

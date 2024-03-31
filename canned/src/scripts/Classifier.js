@@ -43,7 +43,6 @@ async function callOpenAIWithImage(path) {
 }
 
 
-
 callOpenAIWithImage(
    "https://upload.wikimedia.org/wikipedia/commons/b/bf/Apple_03.jpg"
 );

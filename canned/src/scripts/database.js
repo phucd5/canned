@@ -6,13 +6,25 @@ import {
 	collection,
 	getDocs,
 	doc,
-	setDoc,
 	addDoc,
 	GeoPoint,
 } from "firebase/firestore";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 
+export const userRegister = async (username, email, password) => {
+    try {
+        const auth = getAuth();
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        // User is registered. You can now save additional user info to Firestore if needed
+        console.log("User registered with email:", email);
+
+        // Optionally, save additional user information to Firestore here
+    } catch (error) {
+        console.error("Error registering user: ", error.message);
+    }
+};
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
@@ -43,4 +55,20 @@ export const uploadGarbageBin = async (garbage_type, long, lat) => {
 	}
 };
 
-export const getImageURL = async (imageURL) => {};
+export const getImageURL = async (imageURL) => {
+
+};
+
+// export const userRegister = async (username, email, password) => {
+// 	try {
+// 		console.log("begin")
+// 		await addDoc(collection(db, "users"), {
+// 			username: username,
+// 			email: email,
+// 			password: password
+// 		});
+// 		console.log("Document successfully written!");
+// 	} catch (err) {
+// 		console.error("Error writing document: ", err);
+// 	}
+// }
