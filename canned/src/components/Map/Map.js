@@ -12,6 +12,8 @@ import CrowdsourcingButton from "../Crowdsourcing/CrowdsourcingButton";
 import { getAllLocations, getAllImages } from "../../scripts/database";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import CircularIndeterminate from "../CircularIndeterminate";
+import RecycleMarker from "./recycle_marker.png";
+import WasteMarker from "./waste_marker.png";
 import { useNavigate } from 'react-router-dom';
 
 import "./Map.css";
@@ -44,7 +46,7 @@ const InfoWindowContent = ({ type, longitude, latitude }) => {
 
 	return (
 		<div className="infoWindowContent">
-			<h2>{type} Bin</h2>
+			<h2>{type}</h2>
 
 			{type === "Recycle Bin" ? (
 				<p>Recycle here!</p>
@@ -93,6 +95,10 @@ const LocationMap = () => {
 		return () => unsubscribe();
 	}, []);
 
+	useEffect(() => {
+		console.log(buttonState);
+	}, [buttonState]);
+
 	const toggleScrapBook = () => {
 		setIsScrapBook(!isScrapBook);
 	};
@@ -102,6 +108,12 @@ const LocationMap = () => {
 			prevState === "Waste Bin" ? "Recycle Bin" : "Waste Bin"
 		);
 	};
+
+	const handleSetButtonState = (classification) => {
+		if (classification != "Invalid") {
+			setButtonState(classification);
+		}
+	}
 
 	var hotspots = [
 		{
@@ -361,19 +373,19 @@ const LocationMap = () => {
 	// Define setMarkers and setCurrentLocationMarker functions here...
 
 
-	return mapLoaded? (
+	return mapLoaded ? (
 		<APIProvider apiKey={gMapsApi}>
 			<div style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0 }}>
 				<div ref={mapRef} style={{ width: "100%", height: "100%" }}></div>
-				<div 
+				<div
 					style={{
 						position: "fixed",
 						top: "17px",
-						right: "0px", 
+						right: "0px",
 						display: "flex",
-						flexDirection: "column", 
-						alignItems: "center", 
-						gap: "10px", 
+						flexDirection: "column",
+						alignItems: "center",
+						gap: "10px",
 						height: "100%",
 						width: "100px",
 					}}
@@ -383,7 +395,7 @@ const LocationMap = () => {
 						reRenderCrowdsource={reRenderCrowdsource}
 					/>
 					{/* map nav button */}
-						
+
 					{/* Stats nav button */}
 					<button
 						onClick={() => navigate("/stats")}
@@ -411,9 +423,9 @@ const LocationMap = () => {
 						left: "50%",
 						transform: "translateX(-50%)",
 						display: "flex",
-						justifyContent: "center", 
+						justifyContent: "center",
 						alignItems: "center",
-						gap: "20px", 
+						gap: "20px",
 					}}
 				>
 					{/* Button 1 */}
@@ -453,7 +465,7 @@ const LocationMap = () => {
 						}}
 					>
 						<img src={cameraIcon} alt="Icon" style={{ width: "66px", height: "66px" }} />
-						<Camera isOpen={isCameraOpen} onClose={handleCloseCamera} />
+						<Camera isOpen={isCameraOpen} onClose={handleCloseCamera} onClassif={handleSetButtonState} />
 					</button>
 					{/* Button 3 */}
 					<button
@@ -474,14 +486,19 @@ const LocationMap = () => {
 					>
 						<img src={buttonState === "Waste Bin" ? wasteIcon : recycleIcon} alt="Icon" style={{ width: "54px", height: "54px" }} />
 					</button>
-					
+
 				</div>
+				<CrowdsourcingButton
+					setReRenderCrowdsource={setReRenderCrowdsource}
+					reRenderCrowdsource={reRenderCrowdsource}
+				/>
+
 			</div>
 		</APIProvider>
-	
+
 	) : (
 		<CircularIndeterminate />
-	  );
+	);
 };
 
 export default LocationMap;

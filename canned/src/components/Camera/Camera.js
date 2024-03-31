@@ -53,7 +53,7 @@ const callOpenAIWithImage = async (path) => {
 	}
 };
 
-const Camera = ({ isOpen, onClose }) => {
+const Camera = ({ isOpen, onClose, onClassif }) => {
 	const [currentUser, setCurrentUser] = useState(null);
 	const videoRef = useRef(null);
 	const canvasRef = useRef(null);
@@ -160,6 +160,10 @@ const Camera = ({ isOpen, onClose }) => {
 					console.log("Image URL: ", imageUrl);
 					console.log("Classification: ", classification);
 
+					onClassif(classification);
+
+					alert(`Your waste is: ${classification === "Waste Bin" ? "trash" : "recyclable"}. Showing you ${classification}`);
+
 					// Add a document to Firestore
 					const docRef = await addDoc(collection(db, "images"), {
 						image_url: imageUrl,
@@ -198,6 +202,7 @@ const Camera = ({ isOpen, onClose }) => {
 				<video
 					ref={videoRef}
 					autoPlay
+					playsInline
 					style={{ width: "100%" }}
 				></video>
 				<canvas ref={canvasRef} style={{ display: "none" }}></canvas>
