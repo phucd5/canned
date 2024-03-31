@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from "react";
 import markerImage from "./recycle_marker.png";
 import { APIProvider } from "@vis.gl/react-google-maps";
 import { createRoot } from "react-dom/client";
-import { FormControl, Select, MenuItem, InputLabel } from "@material-ui/core";
 import cameraIcon from "./camera_icon.png";
 import scrapbookIcon from "./scrapbook_icon.png";
 import wasteIcon from "./waste_icon.png";
