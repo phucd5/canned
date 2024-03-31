@@ -1,6 +1,7 @@
 import React from "react";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
 import "./StatsPage.css"; // Ensure this path matches the location of your CSS file
+import Camera from "../Camera/Camera";
 
 const StatsPage = ({ itemsRecycled = 10, itemsOtherWaste = 5 }) => {
 	const totalItems = itemsRecycled + itemsOtherWaste;
@@ -24,7 +25,6 @@ const StatsPage = ({ itemsRecycled = 10, itemsOtherWaste = 5 }) => {
 		wasteDiversionRate: 30, // % of waste diverted
 	};
 
-	// Detailed comparison function
 	const compareWithAverage = (userStat, average, unit) => {
 		const difference = userStat - average;
 		const direction = difference >= 0 ? "above" : "below";
@@ -83,7 +83,9 @@ const StatsPage = ({ itemsRecycled = 10, itemsOtherWaste = 5 }) => {
 
 	return (
 		<div className="stats-page">
+			<Camera />
 			<h1>Environmental Impact</h1>
+			<Camera />
 			<div className="chart-section">
 				<ResponsiveContainer width="100%" height="100%">
 					<PieChart>

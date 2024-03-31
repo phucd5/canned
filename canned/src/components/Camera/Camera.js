@@ -1,11 +1,17 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Dialog, DialogTitle, DialogContent, Button } from '@mui/material';
+import React, { useState, useRef, useEffect } from "react";
+import {
+	Dialog,
+	DialogTitle,
+	DialogContent,
+	DialogActions,
+	Button,
+	IconButton,
+} from "@mui/material";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { collection, addDoc } from "firebase/firestore";
+import { collection, addDoc, GeoPoint } from "firebase/firestore";
 import { db } from "../../scripts/database";
 import axios from "axios";
-
-// Assuming callOpenAIWithImage remains the same and is imported or defined elsewhere
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 const callOpenAIWithImage = async (path) => {
 	try {
@@ -19,7 +25,7 @@ const callOpenAIWithImage = async (path) => {
 						content: [
 							{
 								type: "text",
-								text: "Should this be disposed of in a 'recycle bin' or a 'waste bin'? Please answer with either 'recycle bin' or 'waste bin' only. Otherwise, answer 'invalid'.",
+								text: "Should this be disposed of in a 'Recycle Bin' or a 'Waste Bin'? Please answer with either 'Recycle Bin' or 'Waste Bin' only. Otherwise, answer 'Invalid'.",
 							},
 							{
 								type: "image_url",
@@ -34,7 +40,8 @@ const callOpenAIWithImage = async (path) => {
 			{
 				headers: {
 					"Content-Type": "application/json",
-					Authorization: "Bearer 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",
+					Authorization:
+						"Bearer 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",
 				},
 			}
 		);
@@ -47,8 +54,22 @@ const callOpenAIWithImage = async (path) => {
 };
 
 const Camera = ({ isOpen, onClose }) => {
+	const [currentUser, setCurrentUser] = useState(null);
 	const videoRef = useRef(null);
 	const canvasRef = useRef(null);
+
+	useEffect(() => {
+		const auth = getAuth();
+		const unsubscribe = onAuthStateChanged(auth, (user) => {
+			if (user) {
+				setCurrentUser(user);
+			} else {
+				setCurrentUser(null); // sign out
+			}
+		});
+
+		return () => unsubscribe();
+	}, []);
 
 	useEffect(() => {
 		if (isOpen) {
@@ -57,30 +78,42 @@ const Camera = ({ isOpen, onClose }) => {
 		return () => {
 			if (videoRef.current && videoRef.current.srcObject) {
 				const tracks = videoRef.current.srcObject.getTracks();
-				tracks.forEach(track => track.stop());
+				tracks.forEach((track) => track.stop());
 			}
 		};
 	}, [isOpen]);
 
 	const startCamera = () => {
 		if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-			navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
-				.then(stream => {
+			navigator.mediaDevices
+				.getUserMedia({ video: { facingMode: "environment" } })
+				.then((stream) => {
 					if (videoRef.current) {
 						videoRef.current.srcObject = stream;
 					}
 				})
-				.catch(err => console.error("Error accessing the camera: ", err));
+				.catch((err) =>
+					console.error("Error accessing the camera: ", err)
+				);
 		}
 	};
 
 	const captureAndSubmitImage = async () => {
-		const context = canvasRef.current.getContext('2d');
-		context.drawImage(videoRef.current, 0, 0, canvasRef.current.width, canvasRef.current.height);
-		const imageDataUrl = canvasRef.current.toDataURL('image/png');
+		const context = canvasRef.current.getContext("2d");
+		context.drawImage(
+			videoRef.current,
+			0,
+			0,
+			canvasRef.current.width,
+			canvasRef.current.height
+		);
+		const imageDataUrl = canvasRef.current.toDataURL("image/png");
 
 		// Convert captured image to File
-		const imageFile = dataURLtoFile(imageDataUrl, `captured_image_${new Date().getTime()}.png`);
+		const imageFile = dataURLtoFile(
+			imageDataUrl,
+			`captured_image_${new Date().getTime()}.png`
+		);
 
 		// Upload to Firebase and submit to OpenAI
 		await uploadAndClassifyImage(imageFile);
@@ -88,8 +121,11 @@ const Camera = ({ isOpen, onClose }) => {
 	};
 
 	const dataURLtoFile = (dataurl, filename) => {
-		let arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
-			bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
+		let arr = dataurl.split(","),
+			mime = arr[0].match(/:(.*?);/)[1],
+			bstr = atob(arr[1]),
+			n = bstr.length,
+			u8arr = new Uint8Array(n);
 		while (n--) {
 			u8arr[n] = bstr.charCodeAt(n);
 		}
@@ -98,38 +134,86 @@ const Camera = ({ isOpen, onClose }) => {
 
 	const uploadAndClassifyImage = async (imageFile) => {
 		const storage = getStorage();
-		const storageRef = ref(storage, `images/${imageFile.name}_${new Date().getTime()}`);
+		const storageRef = ref(
+			storage,
+			`images/${imageFile.name}_${new Date().getTime()}`
+		);
+		navigator.geolocation.getCurrentPosition(async (position) => {
+			const { latitude, longitude } = position.coords;
+			try {
+				if (currentUser) {
+					const snapshot = await uploadBytes(storageRef, imageFile);
+					const imageUrl = await getDownloadURL(snapshot.ref);
+					const classification = await callOpenAIWithImage(imageUrl);
+					console.log("Image URL: ", imageUrl);
+					console.log("Classification: ", classification);
 
-		try {
-			const snapshot = await uploadBytes(storageRef, imageFile);
-			const imageUrl = await getDownloadURL(snapshot.ref);
-			const classification = await callOpenAIWithImage(imageUrl);
-			console.log("Image URL: ", imageUrl);
-			console.log("Classification: ", classification);
+					// Add a document to Firestore
+					const docRef = await addDoc(collection(db, "images"), {
+						image_url: imageUrl,
+						user: currentUser.uid,
+						classification: classification,
+						coordinate: new GeoPoint(latitude, longitude),
+					});
 
-			// Add a document to Firestore
-			const docRef = await addDoc(collection(db, "images"), {
-				image_url: imageUrl,
-				user: "stock",
-				classification: classification
-			});
-
-			console.log("Document written with ID: ", docRef.id); // Print the document ID
-		} catch (error) {
-			console.error("Error processing the image: ", error);
-		}
+					console.log("Document written with ID: ", docRef.id); // Print the document ID
+				}
+			} catch (error) {
+				console.error("Error processing the image: ", error);
+			}
+		});
 	};
 
 	return (
 		<Dialog open={isOpen} onClose={onClose} maxWidth="sm" fullWidth>
-			<DialogTitle>Camera</DialogTitle>
+			<DialogTitle>
+				Camera
+				<IconButton
+					aria-label="close"
+					onClick={() => {
+						onClose();
+					}} // This should call the function passed as the onClose prop
+					sx={{
+						position: "absolute",
+						right: 8,
+						top: 8,
+						color: (theme) => theme.palette.grey[500],
+					}}
+				>
+					<CloseIcon />
+				</IconButton>
+			</DialogTitle>
 			<DialogContent>
-				<video ref={videoRef} autoPlay style={{ width: '100%' }}></video>
-				<canvas ref={canvasRef} style={{ display: 'none' }}></canvas>
-				<Button onClick={captureAndSubmitImage} variant="contained" color="primary">Capture and Submit</Button>
+				<video
+					ref={videoRef}
+					autoPlay
+					style={{ width: "100%" }}
+				></video>
+				<canvas ref={canvasRef} style={{ display: "none" }}></canvas>
+				<Button
+					onClick={captureAndSubmitImage}
+					variant="contained"
+					color="primary"
+				>
+					Capture and Submit
+				</Button>
 			</DialogContent>
 		</Dialog>
 	);
 };
 
 export default Camera;
+
+const CloseIcon = ({ style = {}, onClick }) => (
+	<svg
+		onClick={onClick}
+		style={{ cursor: "pointer", ...style }}
+		xmlns="http://www.w3.org/2000/svg"
+		width="24"
+		height="24"
+		viewBox="0 0 24 24"
+	>
+		<path d="M0 0h24v24H0V0z" fill="none" />
+		<path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+	</svg>
+);

@@ -22,7 +22,6 @@ const LoginPage = () => {
 				formData.email,
 				formData.password
 			);
-			// If successful, navigate to your desired route
 			navigate("/map");
 		} catch (error) {
 			alert("Password/Email is incorrect or user does not exist.");
