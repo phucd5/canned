@@ -362,17 +362,8 @@ const LocationMap = () => {
 
 	return (
 		<APIProvider apiKey={gMapsApi}>
-			<div ref={mapRef} style={{ width: "100%", height: "1000px" }}></div>
-			<div
-				style={{ position: "relative", width: "100%", height: "100vh" }}
-			>
-				{" "}
-				{/* Adjusted the height to fit the viewport */}
-				<div
-					ref={mapRef}
-					style={{ width: "100%", height: "100%" }}
-				></div>
-				{/* floating button container */}
+			<div style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0 }}>
+				<div ref={mapRef} style={{ width: "100%", height: "100%" }}></div>
 				<div
 					style={{
 						position: "fixed",
@@ -380,21 +371,21 @@ const LocationMap = () => {
 						left: "50%",
 						transform: "translateX(-50%)",
 						display: "flex",
-						justifyContent: "space-around",
-						width: "80%",
+						justifyContent: "center", // This ensures the buttons are centered within the div
+						alignItems: "center",
+						gap: "20px", // This adds space between your buttons
 					}}
 				>
 					{/* Button 1 */}
 					<button
-						onClick={toggleScrapBook} // Use the toggle function on click
+						onClick={toggleScrapBook}
 						style={{
 							borderRadius: "50%",
-							width: "70px", // Adjust size as needed
+							width: "70px",
 							height: "70px",
 							display: "flex",
 							justifyContent: "center",
 							alignItems: "center",
-							marginRight: "20px",
 							backgroundColor: "#1fa524",
 							opacity: "0.90",
 							color: "white",
@@ -402,18 +393,11 @@ const LocationMap = () => {
 							cursor: "pointer",
 						}}
 					>
-						<img
-							src={scrapbookIcon}
-							alt="Icon"
-							style={{
-								width: "50px",
-								height: "50px",
-								position: "center",
-							}}
-						/>
+						<img src={scrapbookIcon} alt="Icon" style={{ width: "50px", height: "50px" }} />
 					</button>
 					{/* Button 2 */}
 					<button
+						onClick={handleOpenCamera}
 						style={{
 							borderRadius: "50%",
 							width: "90px",
@@ -421,28 +405,15 @@ const LocationMap = () => {
 							display: "flex",
 							justifyContent: "center",
 							alignItems: "center",
-							marginBottom: "10px",
 							backgroundColor: "#1fa524",
 							opacity: "0.90",
 							color: "white",
 							border: "none",
 							cursor: "pointer",
 						}}
-						onClick={handleOpenCamera}
 					>
-						<Camera
-							isOpen={isCameraOpen}
-							onClose={handleCloseCamera}
-						/>
-						{/* <img
-							src={cameraIcon}
-							alt="Icon"
-							style={{
-								width: "66px",
-								height: "66px",
-								position: "center",
-							}}
-						/> */}
+						<img src={cameraIcon} alt="Icon" style={{ width: "66px", height: "66px" }} />
+						<Camera isOpen={isCameraOpen} onClose={handleCloseCamera} />
 					</button>
 					{/* Button 3 */}
 					<button
@@ -454,30 +425,21 @@ const LocationMap = () => {
 							display: "flex",
 							justifyContent: "center",
 							alignItems: "center",
-							marginLeft: "20px",
-							backgroundColor:
-								buttonState === "Waste" ? "#1fa524" : "#c6549e", // Different color for demonstration
+							backgroundColor: buttonState === "Waste Bin" ? "#1fa524" : "#c6549e",
 							opacity: "0.90",
 							color: "white",
 							border: "none",
 							cursor: "pointer",
 						}}
 					>
-						<img
-							src={
-								buttonState === "Waste Bin"
-									? wasteIcon
-									: recycleIcon
-							}
-							alt="Icon"
-							style={{ width: "54px", height: "54px" }}
-						/>
+						<img src={buttonState === "Waste Bin" ? wasteIcon : recycleIcon} alt="Icon" style={{ width: "54px", height: "54px" }} />
 					</button>
-					<CrowdsourcingButton
-						setReRenderCrowdsource={setReRenderCrowdsource}
-						reRenderCrowdsource={reRenderCrowdsource}
-					/>
+					
 				</div>
+				<CrowdsourcingButton
+					setReRenderCrowdsource={setReRenderCrowdsource}
+						reRenderCrowdsource={reRenderCrowdsource}
+				/>
 			</div>
 		</APIProvider>
 	);
