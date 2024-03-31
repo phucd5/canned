@@ -6,23 +6,33 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 import LogoutButton from "../AccountPage/LogoutButton";
 import { countUserBins } from "../../scripts/database";
 
-const StatsPage = async ({ itemsRecycled = 5, itemsOtherWaste = 10 }) => {
+const StatsPage = () => {
 	const [currentUser, setCurrentUser] = useState(null);
+	const [itemsRecycled, setItemsRecycled] = useState(5); // Default or initial state
+	const [itemsOtherWaste, setItemsOtherWaste] = useState(10); // Default or initial state
 
 	useEffect(() => {
 		const auth = getAuth();
-		const unsubscribe = onAuthStateChanged(auth, (user) => {
+		const unsubscribe = onAuthStateChanged(auth, async (user) => {
 			if (user) {
 				setCurrentUser(user);
+				// Once the user is confirmed to be set, perform operations that require the UID
+				try {
+					const { recycleBinCount, wasteBinCount } =
+						await countUserBins(user.uid);
+					setItemsRecycled(recycleBinCount);
+					setItemsOtherWaste(wasteBinCount);
+				} catch (error) {
+					console.error("Error fetching bins count:", error);
+				}
 			} else {
-				setCurrentUser(null); // sign out
+				setCurrentUser(null); // User is signed out
 			}
 		});
 
-		return () => unsubscribe();
+		return () => unsubscribe(); // Clean up the subscription on component unmount
 	}, []);
 
-	// console.log("UID", currentUser.uid);
 	// const { itemsRecycled, itemsOtherWaste } = await countUserBins(
 	// 	currentUser.uid
 	// );
@@ -41,10 +51,10 @@ const StatsPage = async ({ itemsRecycled = 5, itemsOtherWaste = 10 }) => {
 
 	// Average stats for comparison
 	const averageStats = {
-		carbonFootprintReduction: 2.5, // kg CO2 saved
-		energySaved: 1.25, // kWh saved
-		landfillSpaceSaved: 0.75, // sq ft saved
-		wasteDiversionRate: 30, // % of waste diverted
+		carbonFootprintReduction: 2000, // kg CO2 saved per year
+		energySaved: 2000, // kWh saved per year
+		landfillSpaceSaved: 500, // sq ft saved per year
+		wasteDiversionRate: 50, // % of waste diverted per year
 	};
 
 	const compareWithAverage = (userStat, average, unit) => {
