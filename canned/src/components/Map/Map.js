@@ -30,18 +30,23 @@ const LocationMap = () => {
 			locationName: "Silliman College",
 			lat: 41.31084987085015,
 			long: -72.92489647867404,
+			type: "waste",
 		},
 		{
 			locationName: "Starbucks at 5th Street",
 			lat: 27.772123,
 			long: -82.634123,
+			type: "recycle",
 		},
 		{
 			locationName: "Community Park",
 			lat: 27.767456,
 			long: -82.638345,
+			type: "waste",
 		},
 	];
+
+	var scrapbooks = [];
 
 	useEffect(() => {
 		if (navigator.geolocation) {
@@ -61,6 +66,37 @@ const LocationMap = () => {
 		}
 	}, []);
 
+
+	//set list for filters, whether recycle or waste
+	const filters = ["recycle", "waste"];
+
+	//variable for scrapbook mode
+	var scrapbook = false;
+
+	const setMarkers = (map) => {
+		var filteredHotspots = null;
+
+		//determine what to display on the map
+		if (scrapbook) {
+			//get the list of locations from the database for scrapbook
+			filteredHotspots = scrapbooks;
+		} else {
+			const filteredHotspots = hotspots.filter((spot) =>
+				filters.includes(spot.type)
+			);
+		}
+
+		//create markers for each location
+		filteredHotspots.forEach((spot) => {
+			const marker = new window.google.maps.Marker({
+				position: { lat: spot.lat, lng: spot.long },
+				map: map,
+				title: spot.locationName,
+				icon: {
+					url: markerImage, // The URL of the image
+					scaledSize: new window.google.maps.Size(50, 50), // Resize the marker to 50x50 pixels
+				},
+			});
 
 var hotspots = [
 	{
