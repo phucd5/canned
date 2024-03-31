@@ -7,6 +7,46 @@ import { Box, Button, Paper, Typography } from "@mui/material";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { collection, addDoc } from "firebase/firestore";
 import { db } from "../../scripts/database";
+import axios from "axios";
+
+const callOpenAIWithImage = async (path) => {
+    try {
+        const response = await axios.post(
+            "https://api.openai.com/v1/chat/completions",
+            {
+                model: "gpt-4-1106-vision-preview",
+                messages: [
+                    {
+                        role: "user",
+                        content: [
+                            {
+                                type: "text",
+                                text: "Should this be disposed of in a 'recycle bin' or a 'waste bin'? Please answer with either 'recycle bin' or 'waste bin' only.",
+                            },
+                            {
+                                type: "image_url",
+                                image_url: {
+                                    url: path,
+                                },
+                            },
+                        ],
+                    },
+                ],
+            },
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: "Bearer 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",
+                },
+            }
+        );
+
+        console.log(response.data.choices[0].message.content);
+        return response.data.choices[0].message.content;
+    } catch (error) {
+        console.error("Error calling the OpenAI API:", error.message);
+    }
+};
 
 function ImageUploader() {
 	const [images, setImages] = React.useState([]);
@@ -29,12 +69,15 @@ function ImageUploader() {
 			try {
 				// Upload the file to Firebase Storage
 				const snapshot = await uploadBytes(storageRef, imageFile);
-
 				// Get the URL to the uploaded file
 				const imageUrl = await getDownloadURL(snapshot.ref);
-
+				const classification = await callOpenAIWithImage(imageUrl)
+				console.log(imageUrl)
+				
 				const docRef = await addDoc(collection(db, "images"), {
-					imageUrl,
+					image_url: imageUrl,
+					user: "stock",
+					classification: classification
 				});
 
 				console.log("Document written with ID: ", docRef.id);
