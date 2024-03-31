@@ -14,6 +14,7 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 import CircularIndeterminate from "../CircularIndeterminate";
 import RecycleMarker from "./recycle_marker.png";
 import WasteMarker from "./waste_marker.png";
+import { useNavigate } from 'react-router-dom';
 
 import "./Map.css";
 import Camera from "../Camera/Camera";
@@ -372,19 +373,19 @@ const LocationMap = () => {
 	// Define setMarkers and setCurrentLocationMarker functions here...
 
 
-	return mapLoaded? (
+	return mapLoaded ? (
 		<APIProvider apiKey={gMapsApi}>
 			<div style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0 }}>
 				<div ref={mapRef} style={{ width: "100%", height: "100%" }}></div>
-				<div 
+				<div
 					style={{
 						position: "fixed",
 						top: "17px",
-						right: "0px", 
+						right: "0px",
 						display: "flex",
-						flexDirection: "column", 
-						alignItems: "center", 
-						gap: "10px", 
+						flexDirection: "column",
+						alignItems: "center",
+						gap: "10px",
 						height: "100%",
 						width: "100px",
 					}}
@@ -394,7 +395,7 @@ const LocationMap = () => {
 						reRenderCrowdsource={reRenderCrowdsource}
 					/>
 					{/* map nav button */}
-						
+
 					{/* Stats nav button */}
 					<button
 						onClick={() => navigate("/stats")}
@@ -422,9 +423,9 @@ const LocationMap = () => {
 						left: "50%",
 						transform: "translateX(-50%)",
 						display: "flex",
-						justifyContent: "center", 
+						justifyContent: "center",
 						alignItems: "center",
-						gap: "20px", 
+						gap: "20px",
 					}}
 				>
 					{/* Button 1 */}
@@ -494,10 +495,10 @@ const LocationMap = () => {
 
 			</div>
 		</APIProvider>
-	
+
 	) : (
 		<CircularIndeterminate />
-	  );
+	);
 };
 
 export default LocationMap;
