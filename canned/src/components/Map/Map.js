@@ -10,6 +10,7 @@ import recycleIcon from "./recycle_icon.png";
 import CrowdsourcingButton from "../Crowdsourcing/CrowdsourcingButton";
 import { getAllLocations, getAllImages } from "../../scripts/database";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+import CircularIndeterminate from "../CircularIndeterminate";
 
 import "./Map.css";
 import Camera from "../Camera/Camera";
@@ -357,7 +358,7 @@ const LocationMap = () => {
 	// Define setMarkers and setCurrentLocationMarker functions here...
 
 	if (!mapLoaded) {
-		return <div>Loading...</div>; // Optional: replace with a spinner or loading indicator
+		return <CircularIndeterminate></CircularIndeterminate>; // Optional: replace with a spinner or loading indicator
 	}
 
 	return (
