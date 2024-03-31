@@ -53,7 +53,7 @@ const callOpenAIWithImage = async (path) => {
 	}
 };
 
-const Camera = ({ isOpen, onClose }) => {
+const Camera = ({ isOpen, onClose, onClassif }) => {
 	const [currentUser, setCurrentUser] = useState(null);
 	const videoRef = useRef(null);
 	const canvasRef = useRef(null);
@@ -159,6 +159,8 @@ const Camera = ({ isOpen, onClose }) => {
 					const classification = await callOpenAIWithImage(imageUrl);
 					console.log("Image URL: ", imageUrl);
 					console.log("Classification: ", classification);
+
+					onClassif(classification);
 
 					// Add a document to Firestore
 					const docRef = await addDoc(collection(db, "images"), {

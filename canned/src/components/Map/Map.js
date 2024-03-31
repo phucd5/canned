@@ -10,6 +10,8 @@ import CrowdsourcingButton from "../Crowdsourcing/CrowdsourcingButton";
 import { getAllLocations, getAllImages } from "../../scripts/database";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import CircularIndeterminate from "../CircularIndeterminate";
+import RecycleMarker from "./recycle_marker.png";
+import WasteMarker from "./waste_marker.png";
 
 import "./Map.css";
 import Camera from "../Camera/Camera";
@@ -89,6 +91,10 @@ const LocationMap = () => {
 		return () => unsubscribe();
 	}, []);
 
+	useEffect(() => {
+		console.log(buttonState);
+	}, [buttonState]);
+
 	const toggleScrapBook = () => {
 		setIsScrapBook(!isScrapBook);
 	};
@@ -98,6 +104,12 @@ const LocationMap = () => {
 			prevState === "Waste Bin" ? "Recycle Bin" : "Waste Bin"
 		);
 	};
+
+	const handleSetButtonState = (classification) => {
+		if (classification != "Invalid") {
+			setButtonState(classification);
+		}
+	}
 
 	var hotspots = [
 		{
@@ -262,7 +274,7 @@ const LocationMap = () => {
 				},
 				map: map,
 				icon: {
-					url: markerImage, // The URL of the image
+					url: spot.garbage_type === "Recycle Bin" ? RecycleMarker : WasteMarker, // The URL of the image
 					scaledSize: new window.google.maps.Size(50, 50), // Resize the marker to 50x50 pixels
 				},
 			});
@@ -413,7 +425,7 @@ const LocationMap = () => {
 						}}
 					>
 						<img src={cameraIcon} alt="Icon" style={{ width: "66px", height: "66px" }} />
-						<Camera isOpen={isCameraOpen} onClose={handleCloseCamera} />
+						<Camera isOpen={isCameraOpen} onClose={handleCloseCamera} onClassif={handleSetButtonState} />
 					</button>
 					{/* Button 3 */}
 					<button
@@ -434,11 +446,11 @@ const LocationMap = () => {
 					>
 						<img src={buttonState === "Waste Bin" ? wasteIcon : recycleIcon} alt="Icon" style={{ width: "54px", height: "54px" }} />
 					</button>
-					
+
 				</div>
 				<CrowdsourcingButton
 					setReRenderCrowdsource={setReRenderCrowdsource}
-						reRenderCrowdsource={reRenderCrowdsource}
+					reRenderCrowdsource={reRenderCrowdsource}
 				/>
 			</div>
 		</APIProvider>
