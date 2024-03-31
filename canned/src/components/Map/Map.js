@@ -65,38 +65,7 @@ const LocationMap = () => {
 			alert("Sorry, please use a new device!");
 		}
 	}, []);
-
-
-	//set list for filters, whether recycle or waste
-	const filters = ["recycle", "waste"];
-
-	//variable for scrapbook mode
-	var scrapbook = false;
-
-	const setMarkers = (map) => {
-		var filteredHotspots = null;
-
-		//determine what to display on the map
-		if (scrapbook) {
-			//get the list of locations from the database for scrapbook
-			filteredHotspots = scrapbooks;
-		} else {
-			const filteredHotspots = hotspots.filter((spot) =>
-				filters.includes(spot.type)
-			);
-		}
-
-		//create markers for each location
-		filteredHotspots.forEach((spot) => {
-			const marker = new window.google.maps.Marker({
-				position: { lat: spot.lat, lng: spot.long },
-				map: map,
-				title: spot.locationName,
-				icon: {
-					url: markerImage, // The URL of the image
-					scaledSize: new window.google.maps.Size(50, 50), // Resize the marker to 50x50 pixels
-				},
-			});
+		
 
 var hotspots = [
 	{
@@ -187,6 +156,37 @@ var hotspots = [
 		});
 	});
 	
+	//set list for filters, whether recycle or waste
+	const filters = ["recycle", "waste"];
+
+	//variable for scrapbook mode
+	var scrapbook = false;
+	
+	var filteredHotspots = null;
+
+		//determine what to display on the map
+		if (scrapbook) {
+			//get the list of locations from the database for scrapbook
+			filteredHotspots = scrapbooks;
+		} else {
+			const filteredHotspots = hotspots.filter((spot) =>
+				filters.includes(spot.type)
+			);
+		}
+
+		//create markers for each location
+		filteredHotspots.forEach((spot) => {
+			const marker = new window.google.maps.Marker({
+				position: { lat: spot.lat, lng: spot.long },
+				map: map,
+				title: spot.locationName,
+				icon: {
+					url: markerImage, // The URL of the image
+					scaledSize: new window.google.maps.Size(50, 50), // Resize the marker to 50x50 pixels
+				},
+			})
+		})
+
 };
 
 // Function to place a marker at the current location
@@ -296,7 +296,8 @@ const setCurrentLocationMarker = (map, location) => {
       </div>
 		</APIProvider>
   );
-};
+}
+
 
 export default LocationMap;
 
