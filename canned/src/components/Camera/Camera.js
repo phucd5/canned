@@ -162,6 +162,8 @@ const Camera = ({ isOpen, onClose, onClassif }) => {
 
 					onClassif(classification);
 
+					alert(`Your waste is: ${classification === "Waste Bin" ? "trash" : "recyclable"}. Showing you ${classification}`);
+
 					// Add a document to Firestore
 					const docRef = await addDoc(collection(db, "images"), {
 						image_url: imageUrl,
