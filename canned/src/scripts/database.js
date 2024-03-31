@@ -39,11 +39,9 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
-
 export const db = getFirestore(app);
 
-export const uploadGarbageBin = async (garbage_type, long, lat) => {
+export const uploadGarbageBin = async (garbage_type, lat, long) => {
 	try {
 		await addDoc(collection(db, "locations"), {
 			coordinate: new GeoPoint(long, lat),
@@ -54,21 +52,3 @@ export const uploadGarbageBin = async (garbage_type, long, lat) => {
 		console.error("Error writing document: ", err);
 	}
 };
-
-export const getImageURL = async (imageURL) => {
-
-};
-
-// export const userRegister = async (username, email, password) => {
-// 	try {
-// 		console.log("begin")
-// 		await addDoc(collection(db, "users"), {
-// 			username: username,
-// 			email: email,
-// 			password: password
-// 		});
-// 		console.log("Document successfully written!");
-// 	} catch (err) {
-// 		console.error("Error writing document: ", err);
-// 	}
-// }
