@@ -20,10 +20,10 @@ const HomePage = ({ onNavigate }) => {
 			<h1 className="title-text">Canned</h1>
 			<div className="buttons-container">
 				<button onClick={handleLogin} className="go-button">
-					<span className="sub-text">Login!</span>
+					<span className="sub-text">Login</span>
 				</button>
 				<button onClick={handleRegister} className="go-button">
-					<span className="sub-text">Register!</span>
+					<span className="sub-text">Register</span>
 				</button>
 			</div>
 		</div>
