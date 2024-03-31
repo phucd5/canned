@@ -17,7 +17,7 @@ const StatsPage = () => {
 			if (user) {
 				setCurrentUser(user);
 				// Once the user is confirmed to be set, perform operations that require the UID
-				try {
+				try { 
 					const { recycleBinCount, wasteBinCount } =
 						await countUserBins(user.uid);
 					setItemsRecycled(recycleBinCount);
@@ -102,23 +102,13 @@ const StatsPage = () => {
 				"sq ft"
 			),
 		},
-		{
-			text: "Waste Diversion Rate",
-			detail: `${wasteDiversionRate.toFixed(2)}%`,
-			comparison: compareWithAverage(
-				wasteDiversionRate,
-				averageStats.wasteDiversionRate,
-				"%"
-			),
-		},
 	];
 
 	return (
-		<div className="stats-page">
+		<div className="stats-page linear-gradient">
 			<Camera />
-			<h1>Environmental Impact</h1>
+			<h1 className="title">Environmental Impact</h1>
 			<Camera />
-			<LogoutButton />
 			<div className="chart-section">
 				<ResponsiveContainer width="100%" height="100%">
 					<PieChart>
@@ -152,6 +142,7 @@ const StatsPage = () => {
 					</div>
 				))}
 			</div>
+			<LogoutButton className="logout-button"/>
 		</div>
 	);
 };

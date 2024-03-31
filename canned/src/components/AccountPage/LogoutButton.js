@@ -26,7 +26,9 @@ const LogoutButton = () => {
 		return null;
 	}
 
-	return <button className="submit-btn" onClick={handleLogout}>Logout</button>;
+	return <button className="submit-btn" onClick={handleLogout}>
+		Logout
+		</button>;
 };
 
 export default LogoutButton;
