@@ -14,7 +14,7 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 import CircularIndeterminate from "../CircularIndeterminate";
 import RecycleMarker from "./recycle_marker.png";
 import WasteMarker from "./waste_marker.png";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
 import "./Map.css";
 import Camera from "../Camera/Camera";
@@ -113,7 +113,7 @@ const LocationMap = () => {
 		if (classification != "Invalid") {
 			setButtonState(classification);
 		}
-	}
+	};
 
 	var hotspots = [
 		{
@@ -278,8 +278,11 @@ const LocationMap = () => {
 				},
 				map: map,
 				icon: {
-					url: markerImage, // The URL of the image
-					scaledSize: new window.google.maps.Size(28, 35), // Resize the marker to 50x50 pixels
+					url:
+						spot.garbage_type === "Recycle Bin"
+							? RecycleMarker
+							: WasteMarker, // The URL of the image
+					scaledSize: new window.google.maps.Size(50, 50), // Resize the marker to 50x50 pixels
 				},
 			});
 
@@ -329,7 +332,7 @@ const LocationMap = () => {
 			// Optional: Use a custom icon for the current location marker
 			icon: {
 				path: window.google.maps.SymbolPath.CIRCLE,
-				scale: 10,
+				scale: 7,
 				fillColor: "#4285F4",
 				fillOpacity: 1,
 				strokeWeight: 2,
@@ -372,11 +375,21 @@ const LocationMap = () => {
 
 	// Define setMarkers and setCurrentLocationMarker functions here...
 
-
 	return mapLoaded ? (
 		<APIProvider apiKey={gMapsApi}>
-			<div style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0 }}>
-				<div ref={mapRef} style={{ width: "100%", height: "100%" }}></div>
+			<div
+				style={{
+					position: "absolute",
+					top: 0,
+					left: 0,
+					right: 0,
+					bottom: 0,
+				}}
+			>
+				<div
+					ref={mapRef}
+					style={{ width: "100%", height: "100%" }}
+				></div>
 				<div
 					style={{
 						position: "fixed",
@@ -413,7 +426,11 @@ const LocationMap = () => {
 							cursor: "pointer",
 						}}
 					>
-						<img src={statsIcon} alt="Icon" style={{ width: "50px", height: "50px" }} />
+						<img
+							src={statsIcon}
+							alt="Icon"
+							style={{ width: "50px", height: "50px" }}
+						/>
 					</button>
 				</div>
 				<div
@@ -445,7 +462,11 @@ const LocationMap = () => {
 							cursor: "pointer",
 						}}
 					>
-						<img src={scrapbookIcon} alt="Icon" style={{ width: "50px", height: "50px" }} />
+						<img
+							src={scrapbookIcon}
+							alt="Icon"
+							style={{ width: "50px", height: "50px" }}
+						/>
 					</button>
 					{/* Button 2 */}
 					<button
@@ -464,8 +485,16 @@ const LocationMap = () => {
 							cursor: "pointer",
 						}}
 					>
-						<img src={cameraIcon} alt="Icon" style={{ width: "66px", height: "66px" }} />
-						<Camera isOpen={isCameraOpen} onClose={handleCloseCamera} onClassif={handleSetButtonState} />
+						<img
+							src={cameraIcon}
+							alt="Icon"
+							style={{ width: "66px", height: "66px" }}
+						/>
+						<Camera
+							isOpen={isCameraOpen}
+							onClose={handleCloseCamera}
+							onClassif={handleSetButtonState}
+						/>
 					</button>
 					{/* Button 3 */}
 					<button
@@ -477,25 +506,33 @@ const LocationMap = () => {
 							display: "flex",
 							justifyContent: "center",
 							alignItems: "center",
-							backgroundColor: buttonState === "Waste Bin" ? "#1fa524" : "#c6549e",
+							backgroundColor:
+								buttonState === "Waste Bin"
+									? "#1fa524"
+									: "#c6549e",
 							opacity: "0.90",
 							color: "white",
 							border: "none",
 							cursor: "pointer",
 						}}
 					>
-						<img src={buttonState === "Waste Bin" ? wasteIcon : recycleIcon} alt="Icon" style={{ width: "54px", height: "54px" }} />
+						<img
+							src={
+								buttonState === "Waste Bin"
+									? wasteIcon
+									: recycleIcon
+							}
+							alt="Icon"
+							style={{ width: "54px", height: "54px" }}
+						/>
 					</button>
-
 				</div>
 				<CrowdsourcingButton
 					setReRenderCrowdsource={setReRenderCrowdsource}
 					reRenderCrowdsource={reRenderCrowdsource}
 				/>
-
 			</div>
 		</APIProvider>
-
 	) : (
 		<CircularIndeterminate />
 	);
