@@ -6,10 +6,13 @@ import cameraIcon from "./camera_icon.png";
 import scrapbookIcon from "./scrapbook_icon.png";
 import wasteIcon from "./waste_icon.png";
 import recycleIcon from "./recycle_icon.png";
+import statsIcon from "./stats_icon.png";
+import mapIcon from "./map_icon.png";
 import CrowdsourcingButton from "../Crowdsourcing/CrowdsourcingButton";
 import { getAllLocations, getAllImages } from "../../scripts/database";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import CircularIndeterminate from "../CircularIndeterminate";
+import { useNavigate } from 'react-router-dom';
 
 import "./Map.css";
 import Camera from "../Camera/Camera";
@@ -65,6 +68,7 @@ const LocationMap = () => {
 	const gMapsApi = "AIzaSyBJnQgOyRfOmaXUJS-uZP7KrcFKdAjZFok";
 	const mapRef = useRef(null);
 	const [mapLoaded, setMapLoaded] = useState(false);
+	const navigate = useNavigate();
 
 	const [isCameraOpen, setCameraOpen] = useState(false);
 
@@ -356,14 +360,50 @@ const LocationMap = () => {
 
 	// Define setMarkers and setCurrentLocationMarker functions here...
 
-	if (!mapLoaded) {
-		return <CircularIndeterminate></CircularIndeterminate>; // Optional: replace with a spinner or loading indicator
-	}
 
-	return (
+	return mapLoaded? (
 		<APIProvider apiKey={gMapsApi}>
 			<div style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0 }}>
 				<div ref={mapRef} style={{ width: "100%", height: "100%" }}></div>
+				<div 
+					style={{
+						position: "fixed",
+						top: "17px",
+						right: "0px", 
+						display: "flex",
+						flexDirection: "column", 
+						alignItems: "center", 
+						gap: "10px", 
+						height: "100%",
+						width: "100px",
+					}}
+				>
+					<CrowdsourcingButton
+						setReRenderCrowdsource={setReRenderCrowdsource}
+						reRenderCrowdsource={reRenderCrowdsource}
+					/>
+					{/* map nav button */}
+						
+					{/* Stats nav button */}
+					<button
+						onClick={() => navigate("/stats")}
+						style={{
+							borderRadius: "50%",
+							width: "65px",
+							height: "65px",
+							display: "flex",
+							justifyContent: "center",
+							alignItems: "center",
+							backgroundColor: "#1fa524",
+							opacity: "0.90",
+							color: "white",
+							border: "none",
+							cursor: "pointer",
+						}}
+					>
+						<img src={statsIcon} alt="Icon" style={{ width: "50px", height: "50px" }} />
+					</button>
+				</div>
 				<div
 					style={{
 						position: "fixed",
@@ -371,9 +411,9 @@ const LocationMap = () => {
 						left: "50%",
 						transform: "translateX(-50%)",
 						display: "flex",
-						justifyContent: "center", // This ensures the buttons are centered within the div
+						justifyContent: "center", 
 						alignItems: "center",
-						gap: "20px", // This adds space between your buttons
+						gap: "20px", 
 					}}
 				>
 					{/* Button 1 */}
@@ -436,13 +476,12 @@ const LocationMap = () => {
 					</button>
 					
 				</div>
-				<CrowdsourcingButton
-					setReRenderCrowdsource={setReRenderCrowdsource}
-						reRenderCrowdsource={reRenderCrowdsource}
-				/>
 			</div>
 		</APIProvider>
-	);
+	
+	) : (
+		<CircularIndeterminate />
+	  );
 };
 
 export default LocationMap;
