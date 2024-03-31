@@ -46,7 +46,7 @@ const InfoWindowContent = ({ type, longitude, latitude }) => {
 
 	return (
 		<div className="infoWindowContent">
-			<h2>{type} Bin</h2>
+			<h2>{type}</h2>
 
 			{type === "Recycle Bin" ? (
 				<p>Recycle here!</p>
