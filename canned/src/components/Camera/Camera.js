@@ -198,6 +198,7 @@ const Camera = ({ isOpen, onClose }) => {
 				<video
 					ref={videoRef}
 					autoPlay
+					playsInline
 					style={{ width: "100%" }}
 				></video>
 				<canvas ref={canvasRef} style={{ display: "none" }}></canvas>
