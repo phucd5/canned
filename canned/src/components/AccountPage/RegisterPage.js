@@ -5,7 +5,6 @@ import axios from "axios";
 import "./RegisterPage.css";
 import { userRegister } from "../../scripts/database";
 
-
 const RegisterPage = () => {
 	const navigate = useNavigate();
 	const [isRegistered, setIsRegistered] = useState(false);
@@ -25,16 +24,20 @@ const RegisterPage = () => {
 	};
 
 	const handleSubmit = async (e) => {
-		e.preventDefault()
-		await userRegister(formData.userName, formData.email, formData.password)
+		e.preventDefault();
+		await userRegister(
+			formData.userName,
+			formData.email,
+			formData.password
+		);
 		// if successful
-		navigate("/login")
+		navigate("/login");
 	};
 
 	return (
 		<div className="linear-gradient">
 			<div className="form-div">
-				<h1>Register</h1>
+				<h1 className="form-header">Register</h1>
 				<form onSubmit={handleSubmit}>
 					<div>
 						<label className="form-label">Username:</label>
