@@ -278,8 +278,8 @@ const LocationMap = () => {
 				},
 				map: map,
 				icon: {
-					url: spot.garbage_type === "Recycle Bin" ? RecycleMarker : WasteMarker, // The URL of the image
-					scaledSize: new window.google.maps.Size(50, 50), // Resize the marker to 50x50 pixels
+					url: markerImage, // The URL of the image
+					scaledSize: new window.google.maps.Size(28, 35), // Resize the marker to 50x50 pixels
 				},
 			});
 
@@ -329,7 +329,7 @@ const LocationMap = () => {
 			// Optional: Use a custom icon for the current location marker
 			icon: {
 				path: window.google.maps.SymbolPath.CIRCLE,
-				scale: 7,
+				scale: 10,
 				fillColor: "#4285F4",
 				fillOpacity: 1,
 				strokeWeight: 2,
