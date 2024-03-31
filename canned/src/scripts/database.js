@@ -1,4 +1,5 @@
 // Import the functions you need from the SDKs you need
+import React, { useEffect, useRef, useState } from "react";
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import {
@@ -8,6 +9,10 @@ import {
 	doc,
 	addDoc,
 	GeoPoint,
+	updateDoc,
+	arrayUnion,
+	query,
+	where,
 } from "firebase/firestore";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -87,5 +92,40 @@ export const getAllImages = async () => {
 	} catch (error) {
 		console.error("Error fetching images:", error);
 		return []; // Return an empty array in case of error
+	}
+};
+
+export const updateImageList = async (userId, imageRef) => {
+	// Assuming currentUser.uid contains the user's UID
+	const userDocRef = doc(db, "users", userId);
+
+	// Update the user document to append the new image's document ID to the imageIds array
+	await updateDoc(userDocRef, {
+		imageIds: arrayUnion(imageRef),
+	});
+};
+
+export const countUserBins = async (userId) => {
+	const imagesCollectionRef = collection(db, "images");
+	const q = query(imagesCollectionRef, where("user", "==", userId));
+
+	try {
+		const querySnapshot = await getDocs(q);
+		let recycleBinCount = 0;
+		let wasteBinCount = 0;
+
+		querySnapshot.forEach((doc) => {
+			const data = doc.data();
+			if (data.classification === "Recycle Bin") {
+				recycleBinCount += 1;
+			} else if (data.classification === "Waste Bin") {
+				wasteBinCount += 1;
+			}
+		});
+
+		return { recycleBinCount, wasteBinCount };
+	} catch (error) {
+		console.error("Error counting bins: ", error);
+		throw new Error("Failed to count bins");
 	}
 };

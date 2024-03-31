@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { collection, addDoc, GeoPoint } from "firebase/firestore";
-import { db } from "../../scripts/database";
+import { db, updateImageList } from "../../scripts/database";
 import axios from "axios";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 
@@ -98,6 +98,18 @@ const Camera = ({ isOpen, onClose }) => {
 		}
 	};
 
+	const captureAndSubmitImageMock = async () => {
+		console.log("Mock async operation started");
+
+		// Simulate an async operation with Promise and setTimeout
+		await new Promise((resolve) => setTimeout(resolve, 100)); // Wait for 2 seconds
+
+		console.log("Mock async operation completed");
+
+		// Now close the dialog
+		onClose();
+	};
+
 	const captureAndSubmitImage = async () => {
 		const context = canvasRef.current.getContext("2d");
 		context.drawImage(
@@ -156,6 +168,7 @@ const Camera = ({ isOpen, onClose }) => {
 						coordinate: new GeoPoint(latitude, longitude),
 					});
 
+					await updateImageList(currentUser.uid, docRef.id);
 					console.log("Document written with ID: ", docRef.id); // Print the document ID
 				}
 			} catch (error) {
@@ -170,9 +183,7 @@ const Camera = ({ isOpen, onClose }) => {
 				Camera
 				<IconButton
 					aria-label="close"
-					onClick={() => {
-						onClose();
-					}} // This should call the function passed as the onClose prop
+					onClick={captureAndSubmitImageMock} // This should call the function passed as the onClose prop
 					sx={{
 						position: "absolute",
 						right: 8,

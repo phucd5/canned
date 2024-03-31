@@ -1,9 +1,31 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
 import "./StatsPage.css"; // Ensure this path matches the location of your CSS file
 import Camera from "../Camera/Camera";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import LogoutButton from "../AccountPage/LogoutButton";
+import { countUserBins } from "../../scripts/database";
 
-const StatsPage = ({ itemsRecycled = 10, itemsOtherWaste = 5 }) => {
+const StatsPage = async ({ itemsRecycled = 5, itemsOtherWaste = 10 }) => {
+	const [currentUser, setCurrentUser] = useState(null);
+
+	useEffect(() => {
+		const auth = getAuth();
+		const unsubscribe = onAuthStateChanged(auth, (user) => {
+			if (user) {
+				setCurrentUser(user);
+			} else {
+				setCurrentUser(null); // sign out
+			}
+		});
+
+		return () => unsubscribe();
+	}, []);
+
+	// console.log("UID", currentUser.uid);
+	// const { itemsRecycled, itemsOtherWaste } = await countUserBins(
+	// 	currentUser.uid
+	// );
 	const totalItems = itemsRecycled + itemsOtherWaste;
 
 	// Assumptions for calculations
@@ -86,6 +108,7 @@ const StatsPage = ({ itemsRecycled = 10, itemsOtherWaste = 5 }) => {
 			<Camera />
 			<h1>Environmental Impact</h1>
 			<Camera />
+			<LogoutButton />
 			<div className="chart-section">
 				<ResponsiveContainer width="100%" height="100%">
 					<PieChart>

@@ -91,7 +91,6 @@ const LocationMap = () => {
 	}, []);
 
 	const toggleScrapBook = () => {
-		console.log("TOGGLED");
 		setIsScrapBook(!isScrapBook);
 	};
 
@@ -129,6 +128,7 @@ const LocationMap = () => {
 	const handleCloseCamera = () => {
 		console.log("CLOSE??");
 		setCameraOpen(false);
+		console.log(isCameraOpen);
 	};
 
 	useEffect(() => {
