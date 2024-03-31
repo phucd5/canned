@@ -18,7 +18,7 @@ const InfoWindowContent = ({ name }) => (
 const LocationMap = () => {
 	const gMapsApi = "AIzaSyBJnQgOyRfOmaXUJS-uZP7KrcFKdAjZFok";
 	const mapRef = useRef(null);
-	const [map, setMap] = useState(null);
+	const [mapLoaded, setMapLoaded] = useState(false);
 
 	const [buttonState, setButtonState] = useState("Waste");
 
@@ -61,34 +61,7 @@ const LocationMap = () => {
 		}
 	}, []);
 
-	const initMap = (lat, lng) => {
-		const mapCenter = { lat, lng };
-		const map = new window.google.maps.Map(mapRef.current, {
-			zoom: 17,
-			center: mapCenter,
-		});
-		setMap(map);
-		setMarkers(map);
-		setCurrentLocationMarker(map, mapCenter);
-	};
 
-	const setMarkers = (map) => {
-		hotspots.forEach((spot) => {
-			const marker = new window.google.maps.Marker({
-				position: { lat: spot.lat, lng: spot.long },
-				map: map,
-				title: spot.locationName,
-				icon: {
-					url: markerImage, 
-					scaledSize: new window.google.maps.Size(30, 42), 
-				},
-			});
-
-			const infoWindowContentElement = document.createElement("div");
-
-			const root = createRoot(infoWindowContentElement);
-			root.render(<InfoWindowContent name={spot.locationName} />);
-  
 var hotspots = [
 	{
 		locationName: "Silliman College",
@@ -167,6 +140,7 @@ var hotspots = [
 		const infoWindow = new window.google.maps.InfoWindow({
 			content: infoWindowContentElement,
 		});
+		
 
 		marker.addListener("click", () => {
 			infoWindow.open({
@@ -214,6 +188,7 @@ const setCurrentLocationMarker = (map, location) => {
   if (!mapLoaded) {
     return <div>Loading...</div>; // Optional: replace with a spinner or loading indicator
   }
+	
 
   return (
     <APIProvider apiKey={gMapsApi}>
