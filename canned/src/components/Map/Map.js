@@ -68,7 +68,7 @@ const InfoWindowContent = ({ type, longitude, latitude }) => {
 
 const LocationMap = () => {
 	const [currentUser, setCurrentUser] = useState(null);
-	const gMapsApi = "AIzaSyBJnQgOyRfOmaXUJS-uZP7KrcFKdAjZFok"; // INSERT API KEY HERE
+	const gMapsApi = "GOOGLE MAP API KEY"; // INSERT API KEY HERE
 	const mapRef = useRef(null);
 	const [mapLoaded, setMapLoaded] = useState(false);
 	const navigate = useNavigate();

@@ -40,8 +40,7 @@ const callOpenAIWithImage = async (path) => {
 			{
 				headers: {
 					"Content-Type": "application/json",
-					Authorization:
-						"Bearer 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",
+					Authorization: "Bearer {OPENAI API KEY}", // INSERT API KEY HERE
 				},
 			}
 		);
