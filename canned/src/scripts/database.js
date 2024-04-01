@@ -11,8 +11,6 @@ import {
 	query,
 	where,
 } from "firebase/firestore";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 
 export const userRegister = async (username, email, password) => {
@@ -23,25 +21,14 @@ export const userRegister = async (username, email, password) => {
 			email,
 			password
 		);
-		// User is registered. You can now save additional user info to Firestore if needed
 		console.log("User registered with email:", email);
-
-		// Optionally, save additional user information to Firestore here
 	} catch (error) {
 		console.error("Error registering user: ", error.message);
 	}
 };
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-	apiKey: "AIzaSyD0drlHbPvd9AnXWmQIKW47olLgo3V1CQ0",
-	authDomain: "yhack2024.firebaseapp.com",
-	projectId: "yhack2024",
-	storageBucket: "yhack2024.appspot.com",
-	messagingSenderId: "710934225305",
-	appId: "1:710934225305:web:42f064e9909742114d7308",
-	measurementId: "G-2RLRVPFX0C",
-};
+
+// INSERT API KEY HERE
+const firebaseConfig = {};
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
@@ -70,10 +57,10 @@ export const getAllLocations = async () => {
 			id: doc.id,
 			...doc.data(),
 		}));
-		return locationsList; // Returns an array of location objects
+		return locationsList;
 	} catch (error) {
 		console.error("Error fetching locations:", error);
-		return []; // Return an empty array in case of error
+		return [];
 	}
 };
 
@@ -85,18 +72,16 @@ export const getAllImages = async () => {
 			id: doc.id,
 			...doc.data(),
 		}));
-		return imageList; // Returns an array of location objects
+		return imageList;
 	} catch (error) {
 		console.error("Error fetching images:", error);
-		return []; // Return an empty array in case of error
+		return [];
 	}
 };
 
 export const updateImageList = async (userId, imageRef) => {
-	// Assuming currentUser.uid contains the user's UID
 	const userDocRef = doc(db, "users", userId);
 
-	// Update the user document to append the new image's document ID to the imageIds array
 	await updateDoc(userDocRef, {
 		imageIds: arrayUnion(imageRef),
 	});
