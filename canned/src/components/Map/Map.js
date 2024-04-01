@@ -1,23 +1,25 @@
 import React, { useEffect, useRef, useState } from "react";
-import markerImage from "./recycle_marker.png";
+
 import { APIProvider } from "@vis.gl/react-google-maps";
 import { createRoot } from "react-dom/client";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+
+import { getAllLocations, getAllImages } from "../../scripts/database";
+import CrowdsourcingButton from "../Crowdsourcing/CrowdsourcingButton";
+import Camera from "../Camera/Camera";
+import CircularIndeterminate from "../CircularIndeterminate";
+
 import cameraIcon from "./camera_icon.png";
 import scrapbookIcon from "./scrapbook_icon.png";
 import wasteIcon from "./waste_icon.png";
 import recycleIcon from "./recycle_icon.png";
 import statsIcon from "./stats_icon.png";
-import mapIcon from "./map_icon.png";
-import CrowdsourcingButton from "../Crowdsourcing/CrowdsourcingButton";
-import { getAllLocations, getAllImages } from "../../scripts/database";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
-import CircularIndeterminate from "../CircularIndeterminate";
+
 import RecycleMarker from "./recycle_marker.png";
 import WasteMarker from "./waste_marker.png";
 import { useNavigate } from "react-router-dom";
 
 import "./Map.css";
-import Camera from "../Camera/Camera";
 
 const InfoWindowScrapbookContent = ({ image, classification }) => {
 	return (
@@ -36,7 +38,6 @@ const InfoWindowScrapbookContent = ({ image, classification }) => {
 
 const InfoWindowContent = ({ type, longitude, latitude }) => {
 	const handleExportToMaps = (service) => {
-		// Placeholder coordinates
 		const url =
 			service === "google"
 				? `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`
@@ -67,7 +68,7 @@ const InfoWindowContent = ({ type, longitude, latitude }) => {
 
 const LocationMap = () => {
 	const [currentUser, setCurrentUser] = useState(null);
-	const gMapsApi = "AIzaSyBJnQgOyRfOmaXUJS-uZP7KrcFKdAjZFok";
+	const gMapsApi = "AIzaSyBJnQgOyRfOmaXUJS-uZP7KrcFKdAjZFok"; // INSERT API KEY HERE
 	const mapRef = useRef(null);
 	const [mapLoaded, setMapLoaded] = useState(false);
 	const navigate = useNavigate();
@@ -115,27 +116,6 @@ const LocationMap = () => {
 		}
 	};
 
-	var hotspots = [
-		{
-			locationName: "Silliman College",
-			lat: 41.31084987085015,
-			long: -72.92489647867404,
-			type: "Waste Bin",
-		},
-		{
-			locationName: "Starbucks at 5th Street",
-			lat: 41.310156313455245,
-			long: -72.92353293964047,
-			type: "Recycle Bin",
-		},
-		{
-			locationName: "Community Park",
-			lat: 27.767456,
-			long: -82.638345,
-			type: "Recycle Bin",
-		},
-	];
-
 	const handleOpenCamera = () => {
 		setCameraOpen(true);
 	};
@@ -149,16 +129,13 @@ const LocationMap = () => {
 	useEffect(() => {
 		const fetchLocationsAndInitMap = async () => {
 			try {
-				// Fetch locations
 				const locationsList = await getAllLocations();
-				setLocations(locationsList); // Update state with fetched locations
+				setLocations(locationsList);
 
-				// After fetching locations, check if geolocation is available
 				if (navigator.geolocation) {
 					navigator.geolocation.getCurrentPosition(
 						(position) => {
 							const { latitude, longitude } = position.coords;
-							// Now with locations fetched, initialize the map
 							initMap(latitude, longitude);
 						},
 						(error) => {
@@ -175,7 +152,6 @@ const LocationMap = () => {
 			}
 		};
 
-		// Call the combined function
 		fetchLocationsAndInitMap();
 	}, []);
 
@@ -183,7 +159,7 @@ const LocationMap = () => {
 		const fetchLocations = async () => {
 			try {
 				const locationsList = await getAllLocations();
-				setLocations(locationsList); // Update state with fetched locations
+				setLocations(locationsList);
 			} catch (error) {
 				console.error("Error fetching locations:", error);
 			}
@@ -194,7 +170,7 @@ const LocationMap = () => {
 		const loadGoogleMapsScript = () => {
 			if (window.google && window.google.maps) {
 				setMapLoaded(true);
-				return; // Script already loaded
+				return;
 			}
 			const script = document.createElement("script");
 			script.src = `https://maps.googleapis.com/maps/api/js?key=${gMapsApi}`;
@@ -202,7 +178,7 @@ const LocationMap = () => {
 			script.defer = true;
 			document.body.appendChild(script);
 			script.onload = () => {
-				setMapLoaded(true); // Set the state to true once the script is loaded
+				setMapLoaded(true);
 			};
 		};
 
@@ -210,12 +186,11 @@ const LocationMap = () => {
 	}, [reRenderCrowdsource, isScrapBook]);
 
 	useEffect(() => {
-		// Only attempt to get the user's location and initialize the map if the Google Maps script has loaded
 		if (mapLoaded) {
 			const fetchLocations = async () => {
 				try {
 					const locationsList = await getAllLocations();
-					setLocations(locationsList); // Update state with fetched locations
+					setLocations(locationsList);
 				} catch (error) {
 					console.error("Error fetching locations:", error);
 				}
@@ -239,21 +214,18 @@ const LocationMap = () => {
 				alert("Sorry, please use a new device!");
 			}
 		}
-	}, [mapLoaded, buttonState, reRenderCrowdsource, isScrapBook]); // Rerun this effect if mapLoaded changes
+	}, [mapLoaded, buttonState, reRenderCrowdsource, isScrapBook]);
 
 	const setMarkers = (map, locationList, imageList) => {
 		console.log("Rendering markers");
 		console.log("Locations 1", locationList);
-		//set list for filters, whether recycle or waste
-
-		//variable for scrapbook mod
 
 		var filteredHotspots = null;
 
-		//determine what to display on the map
+		// determine what to display on the map
 		if (isScrapBook) {
 			console.log("Scrapbook mode");
-			//get the list of locations from the database for scrapbook
+			// get the list of locations from the database for scrapbook
 			filteredHotspots = imageList.filter(
 				(image) => image.user == currentUser.uid
 			);
@@ -281,15 +253,13 @@ const LocationMap = () => {
 					url:
 						spot.garbage_type === "Recycle Bin"
 							? RecycleMarker
-							: WasteMarker, // The URL of the image
-					scaledSize: new window.google.maps.Size(50, 50), // Resize the marker to 50x50 pixels
+							: WasteMarker,
+					scaledSize: new window.google.maps.Size(50, 50),
 				},
 			});
 
-			// Create a div to hold the React component
 			const infoWindowContentElement = document.createElement("div");
 
-			// Use createRoot to render the React component inside the div
 			const root = createRoot(infoWindowContentElement);
 
 			if (isScrapBook) {
@@ -323,13 +293,11 @@ const LocationMap = () => {
 		});
 	};
 
-	// Function to place a marker at the current location
 	const setCurrentLocationMarker = (map, location) => {
 		new window.google.maps.Marker({
 			position: location,
 			map: map,
 			title: "Your Location",
-			// Optional: Use a custom icon for the current location marker
 			icon: {
 				path: window.google.maps.SymbolPath.CIRCLE,
 				scale: 7,
@@ -345,7 +313,7 @@ const LocationMap = () => {
 		const fetchLocations = async () => {
 			try {
 				const locationList = await getAllLocations();
-				setLocations(locationList); // Update state with fetched locations
+				setLocations(locationList);
 				const mapCenter = { lat, lng };
 				const map = new window.google.maps.Map(mapRef.current, {
 					zoom: 15,
@@ -355,7 +323,7 @@ const LocationMap = () => {
 				const fetchImages = async () => {
 					try {
 						const imageList = await getAllImages();
-						setImages(imageList); // Update state with fetched locations
+						setImages(imageList);
 						setMarkers(map, locationList, imageList);
 					} catch (error) {
 						console.error("Error fetching images:", error);
@@ -372,8 +340,6 @@ const LocationMap = () => {
 
 		await fetchLocations();
 	};
-
-	// Define setMarkers and setCurrentLocationMarker functions here...
 
 	return mapLoaded ? (
 		<APIProvider apiKey={gMapsApi}>
@@ -407,7 +373,6 @@ const LocationMap = () => {
 						setReRenderCrowdsource={setReRenderCrowdsource}
 						reRenderCrowdsource={reRenderCrowdsource}
 					/>
-					{/* map nav button */}
 
 					{/* Stats nav button */}
 					<button
@@ -445,7 +410,7 @@ const LocationMap = () => {
 						gap: "20px",
 					}}
 				>
-					{/* Button 1 */}
+					{/* Scrapbook Camera */}
 					<button
 						onClick={toggleScrapBook}
 						style={{
@@ -468,7 +433,7 @@ const LocationMap = () => {
 							style={{ width: "50px", height: "50px" }}
 						/>
 					</button>
-					{/* Button 2 */}
+					{/* Open Camera Button */}
 					<button
 						onClick={handleOpenCamera}
 						style={{
@@ -496,7 +461,7 @@ const LocationMap = () => {
 							onClassif={handleSetButtonState}
 						/>
 					</button>
-					{/* Button 3 */}
+					{/* Toggle Waste Bin or Recycle */}
 					<button
 						onClick={handleToggleButton}
 						style={{

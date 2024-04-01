@@ -1,23 +1,24 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
-import "./StatsPage.css"; // Ensure this path matches the location of your CSS file
-import Camera from "../Camera/Camera";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+
+import Camera from "../Camera/Camera";
 import LogoutButton from "../AccountPage/LogoutButton";
 import { countUserBins } from "../../scripts/database";
 
+import "./StatsPage.css";
+
 const StatsPage = () => {
 	const [currentUser, setCurrentUser] = useState(null);
-	const [itemsRecycled, setItemsRecycled] = useState(5); // Default or initial state
-	const [itemsOtherWaste, setItemsOtherWaste] = useState(10); // Default or initial state
+	const [itemsRecycled, setItemsRecycled] = useState(5);
+	const [itemsOtherWaste, setItemsOtherWaste] = useState(10);
 
 	useEffect(() => {
 		const auth = getAuth();
 		const unsubscribe = onAuthStateChanged(auth, async (user) => {
 			if (user) {
 				setCurrentUser(user);
-				// Once the user is confirmed to be set, perform operations that require the UID
-				try { 
+				try {
 					const { recycleBinCount, wasteBinCount } =
 						await countUserBins(user.uid);
 					setItemsRecycled(recycleBinCount);
@@ -30,12 +31,9 @@ const StatsPage = () => {
 			}
 		});
 
-		return () => unsubscribe(); // Clean up the subscription on component unmount
+		return () => unsubscribe();
 	}, []);
 
-	// const { itemsRecycled, itemsOtherWaste } = await countUserBins(
-	// 	currentUser.uid
-	// );
 	const totalItems = itemsRecycled + itemsOtherWaste;
 
 	// Assumptions for calculations
@@ -142,7 +140,7 @@ const StatsPage = () => {
 					</div>
 				))}
 			</div>
-			<LogoutButton className="logout-button"/>
+			<LogoutButton className="logout-button" />
 		</div>
 	);
 };

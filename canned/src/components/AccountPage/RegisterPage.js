@@ -1,9 +1,12 @@
 import React, { useState } from "react";
+
 import { useNavigate } from "react-router-dom";
-import "./RegisterPage.css";
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
+
 import { db } from "../../scripts/database";
+
+import "./RegisterPage.css";
 
 const RegisterPage = () => {
 	const navigate = useNavigate();

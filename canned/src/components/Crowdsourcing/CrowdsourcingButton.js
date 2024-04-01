@@ -1,8 +1,8 @@
 import React from "react";
-import { uploadGarbageBin } from "../../scripts/database";
-import LogoutButton from "../AccountPage/LogoutButton";
+
 import recycleIcon from "./log_recycle.png";
 import wasteIcon from "./log_waste.png";
+import { uploadGarbageBin } from "../../scripts/database";
 
 function CrowdsourcingButton({ setReRenderCrowdsource, reRenderCrowdsource }) {
 	const getLocation = async (binType) => {
@@ -16,7 +16,6 @@ function CrowdsourcingButton({ setReRenderCrowdsource, reRenderCrowdsource }) {
 				async (position) => {
 					const { latitude, longitude } = position.coords;
 
-					// Call uploadGarbageBin with binType along with latitude and longitude
 					try {
 						await uploadGarbageBin(binType, latitude, longitude);
 						alert(`${binType} location logged successfully.`);
@@ -54,18 +53,39 @@ function CrowdsourcingButton({ setReRenderCrowdsource, reRenderCrowdsource }) {
 		color: "white",
 		border: "none",
 		cursor: "pointer",
-		margin: "0 10px", // Added to create some spacing between buttons
+		margin: "0 10px",
 	};
-	
+
 	return (
-		<div style={{ display: "flex", justifyContent: "center", flexDirection: "column", alignItems: "center", gap: "10px"}}>
-		{/* Assuming LogoutButton also needs styling */}
-		<button style={buttonStyle} onClick={() => getLocation("Waste Bin")}>
-			<img src={wasteIcon} alt="Icon" style={{ width: "50px", height: "50px" }} />
-		</button>
-		<button style={buttonStyle} onClick={() => getLocation("Recycle Bin")}>
-			<img src={recycleIcon} alt="Icon" style={{ width: "50px", height: "50px" }} />
-		</button>
+		<div
+			style={{
+				display: "flex",
+				justifyContent: "center",
+				flexDirection: "column",
+				alignItems: "center",
+				gap: "10px",
+			}}
+		>
+			<button
+				style={buttonStyle}
+				onClick={() => getLocation("Waste Bin")}
+			>
+				<img
+					src={recycleIcon}
+					alt="Icon"
+					style={{ width: "50px", height: "50px" }}
+				/>
+			</button>
+			<button
+				style={buttonStyle}
+				onClick={() => getLocation("Recycle Bin")}
+			>
+				<img
+					src={wasteIcon}
+					alt="Icon"
+					style={{ width: "50px", height: "50px" }}
+				/>
+			</button>
 		</div>
 	);
 }

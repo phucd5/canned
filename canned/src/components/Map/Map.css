@@ -14,13 +14,13 @@
 }
 
 .infoWindowContent p {
-	margin: 0 0 20px 0; /* Increased bottom margin for more space above buttons */
+	margin: 0 0 20px 0;
 	font-size: 14px;
 	color: #666;
 }
 
 .infoWindowContent button {
-	margin: 0 10px 10px 0; /* Added bottom margin for space between buttons */
+	margin: 0 10px 10px 0;
 	padding: 5px 10px;
 	background-color: #1a73e8;
 	color: white;

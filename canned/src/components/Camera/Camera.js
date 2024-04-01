@@ -1,17 +1,17 @@
 import React, { useState, useRef, useEffect } from "react";
+import axios from "axios";
 import {
 	Dialog,
 	DialogTitle,
 	DialogContent,
-	DialogActions,
 	Button,
 	IconButton,
 } from "@mui/material";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { collection, addDoc, GeoPoint } from "firebase/firestore";
-import { db, updateImageList } from "../../scripts/database";
-import axios from "axios";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+
+import { db, updateImageList } from "../../scripts/database";
 
 const callOpenAIWithImage = async (path) => {
 	try {
@@ -41,7 +41,7 @@ const callOpenAIWithImage = async (path) => {
 				headers: {
 					"Content-Type": "application/json",
 					Authorization:
-						"Bearer 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",
+						"Bearer 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",
 				},
 			}
 		);
@@ -101,12 +101,10 @@ const Camera = ({ isOpen, onClose, onClassif }) => {
 	const captureAndSubmitImageMock = async () => {
 		console.log("Mock async operation started");
 
-		// Simulate an async operation with Promise and setTimeout
-		await new Promise((resolve) => setTimeout(resolve, 100)); // Wait for 2 seconds
+		await new Promise((resolve) => setTimeout(resolve, 100));
 
 		console.log("Mock async operation completed");
 
-		// Now close the dialog
 		onClose();
 	};
 
@@ -121,15 +119,13 @@ const Camera = ({ isOpen, onClose, onClassif }) => {
 		);
 		const imageDataUrl = canvasRef.current.toDataURL("image/png");
 
-		// Convert captured image to File
 		const imageFile = dataURLtoFile(
 			imageDataUrl,
 			`captured_image_${new Date().getTime()}.png`
 		);
 
-		// Upload to Firebase and submit to OpenAI
 		await uploadAndClassifyImage(imageFile);
-		onClose(); // Close the dialog after capturing and submitting the image
+		onClose();
 	};
 
 	const dataURLtoFile = (dataurl, filename) => {
@@ -162,7 +158,13 @@ const Camera = ({ isOpen, onClose, onClassif }) => {
 
 					onClassif(classification);
 
-					alert(`Your waste is: ${classification === "Waste Bin" ? "trash" : "recyclable"}. Showing you ${classification}`);
+					alert(
+						`Your waste is: ${
+							classification === "Waste Bin"
+								? "trash"
+								: "recyclable"
+						}. Showing you ${classification}`
+					);
 
 					// Add a document to Firestore
 					const docRef = await addDoc(collection(db, "images"), {
@@ -187,7 +189,7 @@ const Camera = ({ isOpen, onClose, onClassif }) => {
 				Camera
 				<IconButton
 					aria-label="close"
-					onClick={captureAndSubmitImageMock} // This should call the function passed as the onClose prop
+					onClick={captureAndSubmitImageMock}
 					sx={{
 						position: "absolute",
 						right: 8,
